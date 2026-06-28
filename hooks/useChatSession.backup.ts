@@ -76,45 +76,10 @@ export function useChatSession(initialMessages: ChatMessage[] = []) {
     }, 12);
   }
 
-  async function sendMessage(content: string) {
-  const userMessage = createMessage("user", content);
-
-  setMessages((prev) => [...prev, userMessage]);
-  setIsResponding(true);
-
-  try {
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message: content,
-      }),
-    });
-
-    const data = await res.json();
-
-    const assistantMessage = createMessage(
-      "assistant",
-      data.reply ?? "No response."
-    );
-
-    setMessages((prev) => [...prev, assistantMessage]);
-  } catch (error) {
-    console.error(error);
-
-    setMessages((prev) => [
-      ...prev,
-      createMessage(
-        "assistant",
-        "❌ Failed to connect to Gemini."
-      ),
-    ]);
-  } finally {
-    setIsResponding(false);
+  function sendMessage(content: string) {
+    setMessages((prev) => [...prev, createMessage("user", content)]);
+    simulateAssistantReply();
   }
-}
 
   function regenerateLast() {
     setMessages((prev) => {
